@@ -1,0 +1,21 @@
+# File Types
+*.txt
+*.bin
+*.lock
+
+# Folders
+/*/nb-configuration.xml
+/nbproject/
+/*/nbproject/
+/*/target/
+/*/build/
+/netbeans-gradle-javaee-models/gradle-api/
+.gradle/
+.gradle
+/.nb-gradle-properties
+.nb-gradle/
+/Log/
+
+# Directories left from old Ant project
+/build/
+/nbproject/private/
