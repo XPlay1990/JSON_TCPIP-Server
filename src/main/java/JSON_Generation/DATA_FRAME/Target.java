@@ -1,5 +1,5 @@
 
-package JSON_Generation.PASSAT_DATA_FRAME;
+package JSON_Generation.DATA_FRAME;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

@@ -4,9 +4,9 @@
 package Socket;
 
 import JSON_Generation.File_Reader;
-import JSON_Generation.PASSAT_DATA_FRAME.DataArray;
-import JSON_Generation.PASSAT_DATA_FRAME.DataDescr;
-import JSON_Generation.PASSAT_DATA_FRAME.Passat_Data_Frame;
+import JSON_Generation.DATA_FRAME.DataArray;
+import JSON_Generation.DATA_FRAME.DataDescr;
+import JSON_Generation.DATA_FRAME.Data_Frame;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.BufferedReader;
@@ -16,6 +16,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -28,16 +29,21 @@ import java.util.logging.Logger;
  */
 public class SocketHandler {
 
-    private String hw_ResponseFile = "PASSAT_AQ_Join_GUI_Request.json";
-    private String AQ_Join_ResponseFile = "PASSAT_AQ_join.json";
-    private String data_File = "PASSAT_Data.json";
+    private String hw_ResponseFile = "AQ_Join_GUI_Request.json";
+    private String AQ_Join_ResponseFile = "AQ_join.json";
+    private String data_File = "Data.json";
 
-    private Passat_Data_Frame fromJson;
+    private Data_Frame fromJson;
     private List<DataArray> dataArrays;
     private String json;
     private Gson gson;
 
-    private int i;
+//    private int i;
+    private Boolean plusOrMinus = true;
+    private int counter;
+
+    private int NumberOfData = 1000;
+    private int sendTimeMS = 20;
 
     public SocketHandler() {
         int port = 1337;
@@ -48,7 +54,7 @@ public class SocketHandler {
             File_Reader fileReader = new File_Reader();
             String read_File = fileReader.read_File(data_File);
             gson = new GsonBuilder().create();
-            fromJson = gson.fromJson(read_File, Passat_Data_Frame.class);
+            fromJson = gson.fromJson(read_File, Data_Frame.class);
             dataArrays = fromJson.getData().getTargets().get(0).getTargetElement().getDataset().getDataArray();
 
             while (true) {
@@ -68,11 +74,12 @@ public class SocketHandler {
 //                }
                 Runnable r1 = () -> {
                     while (true) {
-                        randomizeData();
-                        String trimmedString = json.replace("\n", "").replace("\r", "");
-                        writer.println(trimmedString); //new Date().toString()
+                        ArrayList<Integer> randomizeData = randomizeData();
+//                       String trimmedString = json.replace("\n", "").replace("\r", "");
+                        writer.println(randomizeData); //new Date().toString()
+                        System.out.println(randomizeData);
                         try {
-                            Thread.sleep(30);
+                            Thread.sleep(sendTimeMS);
                         } catch (InterruptedException ex) {
                             Logger.getLogger(SocketHandler.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -91,22 +98,28 @@ public class SocketHandler {
 
     }
 
-    private synchronized void randomizeData() {
-        dataArrays.clear();
+    private synchronized ArrayList<Integer> randomizeData() {
         Random rand = new Random();
+        ArrayList<Integer> rndList = new ArrayList<>();
 
-        for (int count = 0; count < 60; count++) {
-            DataArray dataArray = new DataArray();
-            DataDescr dataDescr = new DataDescr();
-//            int n = i;
-            int n = (rand.nextInt(80)) - 40;
-            dataDescr.setDataValue(n);
-            dataArray.setDataDescr(dataDescr);
-            dataArrays.add(dataArray);
-            i++;
+        for (int count = 0; count < NumberOfData; count++) {
+          int n = (rand.nextInt(80)) - 40;
+//            int n = (rand.nextInt(5));
+//            int n = count + counter;
+            rndList.add(n);
+//            i++;
         }
 
-        json = gson.toJson(fromJson);
-//        System.out.println(dataArrays);
+        if (plusOrMinus) {
+            counter++;
+        } else {
+            counter--;
+        }
+
+        if (counter == 100 || counter == -100) {
+            plusOrMinus = !plusOrMinus;
+        }
+
+        return rndList;
     }
 }

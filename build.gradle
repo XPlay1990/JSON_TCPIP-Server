@@ -21,6 +21,24 @@ repositories {
     //   http://www.gradle.org/docs/current/userguide/dependency_management.html#sec:repositories
 }
 
+jar {
+    manifest {
+        attributes "Main-Class": "Main.main"
+    }
+ 
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+allprojects {
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            //            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+        }
+    }
+}
+
 dependencies {
     // TODO: Add dependencies here ...
     // You can read more about how to add dependency here:

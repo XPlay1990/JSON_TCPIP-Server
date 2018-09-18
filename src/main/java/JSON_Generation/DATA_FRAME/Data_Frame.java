@@ -1,4 +1,4 @@
-package JSON_Generation.PASSAT_DATA_FRAME;
+package JSON_Generation.DATA_FRAME;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Passat_Data_Frame {
+public class Data_Frame {
 
     @SerializedName("header")
     @Expose
@@ -43,13 +43,13 @@ public class Passat_Data_Frame {
             gson.toJson(this, filewriter);
             filewriter.flush();
         } catch (IOException ex) {
-            Logger.getLogger(Passat_Data_Frame.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Data_Frame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public static Passat_Data_Frame fromJSON(String json) {
+    public static Data_Frame fromJSON(String json) {
         Gson gson = new GsonBuilder().create();
-        Passat_Data_Frame fromJson = gson.fromJson(json, Passat_Data_Frame.class);
+        Data_Frame fromJson = gson.fromJson(json, Data_Frame.class);
         return fromJson;
     }
 }
