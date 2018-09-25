@@ -45,6 +45,8 @@ public class SocketHandler {
     private int NumberOfData = 1000;
     private int sendTimeMS = 20;
 
+    Thread th1;
+
     public SocketHandler() {
         int port = 1337;
         try (ServerSocket serverSocket = new ServerSocket(port)) {
@@ -52,14 +54,17 @@ public class SocketHandler {
             System.out.println("Server is listening on port " + port);
 
             File_Reader fileReader = new File_Reader();
-            String read_File = fileReader.read_File(data_File);
-            gson = new GsonBuilder().create();
-            fromJson = gson.fromJson(read_File, Data_Frame.class);
-            dataArrays = fromJson.getData().getTargets().get(0).getTargetElement().getDataset().getDataArray();
+//            String read_File = fileReader.read_File(data_File);
+//            gson = new GsonBuilder().create();
+//            fromJson = gson.fromJson(read_File, Data_Frame.class);
+//            dataArrays = fromJson.getData().getTargets().get(0).getTargetElement().getDataset().getDataArray();
 
             while (true) {
                 Socket socket = serverSocket.accept();
 
+                if (th1 != null) {
+                    th1.interrupt();
+                }
                 System.out.println("New client connected");
 
                 OutputStream output = socket.getOutputStream();
@@ -77,7 +82,7 @@ public class SocketHandler {
                         ArrayList<Integer> randomizeData = randomizeData();
 //                       String trimmedString = json.replace("\n", "").replace("\r", "");
                         writer.println(randomizeData); //new Date().toString()
-                        System.out.println(randomizeData);
+//                        System.out.println(randomizeData);
                         try {
                             Thread.sleep(sendTimeMS);
                         } catch (InterruptedException ex) {
@@ -85,7 +90,7 @@ public class SocketHandler {
                         }
                     }
                 };
-                Thread th1 = new Thread(r1);
+                th1 = new Thread(r1);
                 th1.start();
             }
 
@@ -103,7 +108,7 @@ public class SocketHandler {
         ArrayList<Integer> rndList = new ArrayList<>();
 
         for (int count = 0; count < NumberOfData; count++) {
-          int n = (rand.nextInt(80)) - 40;
+            int n = (rand.nextInt(80)) - 40;
 //            int n = (rand.nextInt(5));
 //            int n = count + counter;
             rndList.add(n);
